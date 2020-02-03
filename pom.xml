@@ -4,19 +4,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.micromall.parent</groupId>
-    <artifactId>micromall</artifactId>
+    <groupId>com.mall.parent</groupId>
+    <artifactId>mall</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <modules>
-        <module>micromall-registry</module>
-        <module>micromall-gateway</module>
-        <module>micromall-item</module>
+        <module>mall-registry</module>
+        <module>mall-gateway</module>
+        <module>mall-item</module>
     </modules>
 
     <packaging>pom</packaging>
 
-    <name>micromall</name>
-    <description>微商城父工程</description>
+    <name>mall</name>
+    <description>商城父工程</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -35,7 +35,7 @@
         <druid.starter.version>1.1.9</druid.starter.version>
         <mysql.version>5.1.32</mysql.version>
         <pageHelper.starter.version>1.2.3</pageHelper.starter.version>
-        <micromall.latest.version>1.0.0-SNAPSHOT</micromall.latest.version>
+        <mall.latest.version>1.0.0-SNAPSHOT</mall.latest.version>
         <fastDFS.client.version>1.26.1-RELEASE</fastDFS.client.version>
     </properties>
 
