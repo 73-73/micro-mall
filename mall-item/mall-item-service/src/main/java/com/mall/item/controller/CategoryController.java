@@ -3,12 +3,11 @@ package com.mall.item.controller;
 import com.mall.item.service.CategoryService;
 import com.mall.pojo.Category;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,7 +17,7 @@ import java.util.List;
  * @author pan
  * @create 2020-02-02-14:35
  */
-@Controller
+@RestController
 @RequestMapping("category")
 public class CategoryController {
 
@@ -44,5 +43,41 @@ public class CategoryController {
         }
         //成功：200
         return ResponseEntity.ok(categoryList);
+    }
+
+    /**
+     * 根据结点信息新增分类类目
+     *
+     * @param category
+     * @return 新增的id
+     */
+    @PostMapping("add")
+    public ResponseEntity<Void> addCategory(Category category) {
+        categoryService.addCategory(category);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * 根据结点id删除分类类目
+     *
+     * @param id
+     * @return
+     */
+    @DeleteMapping("delete")
+    public ResponseEntity<Void> deleteCategory(@RequestParam("id") Long id) {
+        this.categoryService.deleteCategoryById(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    /**
+     * 根据结点id修改分类类目
+     *
+     * @param category
+     * @return
+     */
+    @PutMapping("edit")
+    public ResponseEntity<Void> editCategory(Category category) {
+        this.categoryService.editCategory(category);
+        return ResponseEntity.status(200).build();
     }
 }

@@ -11,6 +11,7 @@ import java.util.List;
 
 /**
  * CategoryService实现类
+ *
  * @author pan
  * @create 2020-02-02-14:44
  */
@@ -24,6 +25,30 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = new Category();
         category.setParentId(pid);
         return categoryMapper.select(category);
+    }
+
+    @Override
+    public void addCategory(Category category) {
+        //让其可以主键自增
+        category.setId(null);
+        categoryMapper.insert(category);
+        if (category.getParentId() != null) {
+            //如果有父类结点，则要把父类节点的isParent字段更新为true
+            Category parent = new Category();
+            parent.setId(category.getParentId());
+            parent.setIsParent(true);
+            this.categoryMapper.updateByPrimaryKeySelective(parent);
+        }
+    }
+
+    @Override
+    public void editCategory(Category category) {
+        this.categoryMapper.updateByPrimaryKeySelective(category);
+    }
+
+    @Override
+    public void deleteCategoryById(Long id) {
+        this.categoryMapper.deleteByPrimaryKey(id);
     }
 }
 
