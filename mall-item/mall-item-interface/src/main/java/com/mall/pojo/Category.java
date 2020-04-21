@@ -6,6 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
+ * 商品类目表实体
  * @author pan
  * @create 2020-02-02-14:27
  */

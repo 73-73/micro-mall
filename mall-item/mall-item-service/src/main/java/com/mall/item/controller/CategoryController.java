@@ -5,7 +5,6 @@ import com.mall.pojo.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,5 +78,18 @@ public class CategoryController {
     public ResponseEntity<Void> editCategory(Category category) {
         this.categoryService.editCategory(category);
         return ResponseEntity.status(200).build();
+    }
+
+    /**
+     * 通过品牌id查询该品牌所属的分类
+     * @param bid
+     */
+    @GetMapping("bid/{bid}")
+    public ResponseEntity<List<Category>> queryCategoryByBid(@PathVariable("bid") Long bid){
+        List<Category> list = this.categoryService.queryByBrandId(bid);
+        if(list == null || list.size() < 1){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(list);
     }
 }

@@ -50,5 +50,10 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategoryById(Long id) {
         this.categoryMapper.deleteByPrimaryKey(id);
     }
+
+    @Override
+    public List<Category> queryByBrandId(Long bid) {
+        return this.categoryMapper.queryCategoryByBid(bid);
+    }
 }
 
