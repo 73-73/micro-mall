@@ -72,4 +72,9 @@ public class BrandServiceImpl implements BrandService {
         PageInfo<Brand> brandPageInfo = new PageInfo<>(brands);
         return new PageResult<>(brandPageInfo.getTotal(), brandPageInfo.getPageSize(), brandPageInfo.getList());
     }
+
+    @Override
+    public List<Brand> queryBrandsByCid(Long cid) {
+        return brandMapper.queryBrandsByCid(cid);
+    }
 }

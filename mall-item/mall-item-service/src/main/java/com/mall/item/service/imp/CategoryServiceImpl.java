@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -54,6 +55,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<Category> queryByBrandId(Long bid) {
         return this.categoryMapper.queryCategoryByBid(bid);
+    }
+
+    @Override
+    public List<String> queryNamesByIds(List<Long> cid) {
+        List<Category> categories = categoryMapper.selectByIdList(cid);
+        //集合的流式编程
+        return categories.stream().map(category -> category.getName()).collect(Collectors.toList());
     }
 }
 

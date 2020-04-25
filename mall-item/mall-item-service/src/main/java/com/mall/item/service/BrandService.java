@@ -46,4 +46,11 @@ public interface BrandService {
      * @return
      */
     PageResult<Brand> queryBrandsByPage(String key, Integer page, Integer rows, String sortBy, Boolean desc);
+
+    /**
+     * 通过分类id查询分类下的所有品牌
+     * @param cid 分类id
+     * @return
+     */
+    List<Brand> queryBrandsByCid(Long cid);
 }

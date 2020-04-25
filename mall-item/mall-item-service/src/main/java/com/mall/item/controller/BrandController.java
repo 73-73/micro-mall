@@ -39,6 +39,21 @@ public class BrandController {
         return ResponseEntity.ok(result);
     }
 
+    /**
+     * 根据分类id查询该分类下所有的品牌
+     *
+     * @param cid
+     * @return
+     */
+    @GetMapping("cid/{cid}")
+    public ResponseEntity<List<Brand>> queryBrandsByCid(@PathVariable("cid") Long cid) {
+        List<Brand> brands = brandService.queryBrandsByCid(cid);
+        if (CollectionUtils.isEmpty(brands)) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(brands);
+    }
+
 
     /**
      * 根据品牌id删除品牌
@@ -54,7 +69,8 @@ public class BrandController {
 
     /**
      * 添加品牌，并且在关联表中添加相关的映射
-     * @param brand 品牌信息
+     *
+     * @param brand      品牌信息
      * @param categories 品牌所属的分类id
      * @return
      */
@@ -66,13 +82,14 @@ public class BrandController {
 
     /**
      * 通过id更新品牌
+     *
      * @param brand 品牌实体
-     * @param cids 品牌所属的分类id
+     * @param cids  品牌所属的分类id
      * @return
      */
     @PutMapping()
-    public ResponseEntity<Void> updateBrand(Brand brand,@RequestParam("cids") List<Long> cids) {
-        brandService.updateBrand(brand,cids);
+    public ResponseEntity<Void> updateBrand(Brand brand, @RequestParam("cids") List<Long> cids) {
+        brandService.updateBrand(brand, cids);
         return ResponseEntity.ok().build();
     }
 }

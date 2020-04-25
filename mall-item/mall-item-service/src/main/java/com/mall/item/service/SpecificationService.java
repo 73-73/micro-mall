@@ -60,4 +60,6 @@ public interface SpecificationService {
      * @param specParam
      */
     void updateParam(SpecParam specParam);
+
+
 }

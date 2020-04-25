@@ -47,4 +47,11 @@ public interface CategoryService {
      * @return
      */
     List<Category> queryByBrandId(Long bid);
+
+    /**
+     * 批量查询id集合中的分类名称，以List形式返回
+     * @param cid
+     * @return
+     */
+    List<String> queryNamesByIds(List<Long> cid);
 }

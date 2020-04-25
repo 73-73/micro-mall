@@ -4,19 +4,22 @@ import com.mall.pojo.Category;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import tk.mybatis.mapper.additional.idlist.SelectByIdListMapper;
 import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
 
 /**
  * 类目表的mapper接口
+ *
  * @author pan
  * @create 2020-02-02-14:39
  */
-public interface CategoryMapper extends Mapper<Category> {
+public interface CategoryMapper extends Mapper<Category>, SelectByIdListMapper<Category, Long> {
 
     /**
      * 通过品牌id查询所属的类目信息
+     *
      * @param pid
      * @return
      */
@@ -25,6 +28,7 @@ public interface CategoryMapper extends Mapper<Category> {
 
     /**
      * 根据cid删除关联表中相关的记录
+     *
      * @param cid
      */
     @Delete("DELETE FROM tb_category_brand WHERE category_id = #{cid}")
