@@ -92,4 +92,15 @@ public class BrandController {
         brandService.updateBrand(brand, cids);
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * 通过品牌id查询品牌
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("{id}")
+    public Brand queryBrandById(@PathVariable("id") Long id) {
+        return brandService.queryBrandById(id);
+    }
 }

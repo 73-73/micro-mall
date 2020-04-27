@@ -36,7 +36,7 @@ public class GoodsController {
      * @return
      */
     @GetMapping("spu/page")
-    public ResponseEntity<PageResult<SpuVo>> querySpuBoByPage(
+    public ResponseEntity<PageResult<SpuVo>> querySpuVoByPage(
             @RequestParam(value = "key", required = false) String key,
             @RequestParam(value = "saleable", required = false) Boolean saleable,
             @RequestParam(value = "page", defaultValue = "1") Integer page,
@@ -83,7 +83,7 @@ public class GoodsController {
      * @return
      */
     @GetMapping("sku/list")
-    public ResponseEntity<List<Sku>> querySkusBySpuId(@RequestParam("id") Long spuId) {
+    public ResponseEntity<List<Sku>> querySkuBySpuId(@RequestParam("id") Long spuId) {
         List<Sku> skus = this.goodsService.querySkusBySpuId(spuId);
         if (CollectionUtils.isEmpty(skus)) {
             return ResponseEntity.notFound().build();
