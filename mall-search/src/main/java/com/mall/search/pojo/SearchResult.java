@@ -9,6 +9,7 @@ import java.util.Map;
 
 /**
  * 用于前端结果返回，比PageResult包含了更多的信息，如品牌集合，分类集合，规格参数集合等
+ *
  * @author pan
  * @create 2020-04-27-17:10
  */
@@ -27,7 +28,8 @@ public class SearchResult<Goods> extends PageResult<Goods> {
     /**
      * 规格参数的过滤条件
      */
-    private List<Map<String,Object>> specs;
+    private List<Map<String, Object>> specs;
+
 
     public List<Category> getCategories() {
         return categories;
@@ -53,28 +55,27 @@ public class SearchResult<Goods> extends PageResult<Goods> {
         this.specs = specs;
     }
 
-    public SearchResult(List<Category> categories, List<Brand> brands, List<Map<String,Object>> specs){
+    public SearchResult(Long total, Integer totalPage, List<Goods> items, List<Category> categories, List<Brand> brands, List<Map<String, Object>> specs) {
+        super(total, totalPage, items);
         this.categories = categories;
         this.brands = brands;
         this.specs = specs;
     }
 
-    public SearchResult(Long total, List<Goods> item,List<Category> categories, List<Brand> brands, List<Map<String,Object>> specs){
-        super(total,item);
+    public SearchResult(List<Category> categories, List<Brand> brands, List<Map<String, Object>> specs) {
         this.categories = categories;
         this.brands = brands;
         this.specs = specs;
     }
 
-    public SearchResult(Long total,Long totalPage, List<Goods> item,List<Category> categories, List<Brand> brands){
-        super(total,totalPage,item);
+    public SearchResult(List<Goods> items, Long total, Integer totalPage,List<Category> categories, List<Brand> brands) {
+        super(total,totalPage,items);
         this.categories = categories;
         this.brands = brands;
     }
 
-    public SearchResult(Long total,Long totalPage, List<Goods> item,List<Category> categories,
-                        List<Brand> brands, List<Map<String,Object>> specs){
-        super(total,totalPage,item);
+    public SearchResult(Long total, Long totalPage, List<com.mall.search.pojo.Goods> item, List<Category> categories, List<Brand> brands, List<Map<String, Object>> specs) {
+        super(total, totalPage, item);
         this.categories = categories;
         this.brands = brands;
         this.specs = specs;

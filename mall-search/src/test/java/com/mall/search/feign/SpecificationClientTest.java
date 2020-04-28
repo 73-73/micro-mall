@@ -1,29 +1,22 @@
 package com.mall.search.feign;
 
 import com.mall.common.PageResult;
-import com.mall.pojo.Brand;
 import com.mall.pojo.Spu;
 import com.mall.search.SearchApplication;
 import com.mall.search.pojo.Goods;
 import com.mall.search.repository.GoodsRepository;
 import com.mall.search.service.SearchService;
 import com.mall.vo.SpuVo;
-import com.netflix.discovery.converters.Auto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * @author pan
  * @create 2020-04-26-11:51

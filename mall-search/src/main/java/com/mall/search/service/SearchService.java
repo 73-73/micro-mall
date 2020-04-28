@@ -2,7 +2,6 @@ package com.mall.search.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mall.common.PageResult;
 import com.mall.pojo.*;
 import com.mall.search.feign.BrandClient;
 import com.mall.search.feign.CategoryClient;
@@ -10,17 +9,23 @@ import com.mall.search.feign.GoodsClient;
 import com.mall.search.feign.SpecificationClient;
 import com.mall.search.pojo.Goods;
 import com.mall.search.pojo.SearchRequest;
+import com.mall.search.pojo.SearchResult;
 import com.mall.search.repository.GoodsRepository;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.LongTerms;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.query.FetchSourceFilter;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -50,6 +55,13 @@ public class SearchService {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
 
+    /**
+     * 通过spu构造Goods，用来构建索引
+     *
+     * @param spu
+     * @return
+     * @throws IOException
+     */
     public Goods buildGoods(Spu spu) throws IOException {
 
         // 创建goods对象
@@ -167,7 +179,13 @@ public class SearchService {
         return result;
     }
 
-    public PageResult<Goods> search(SearchRequest request) {
+    /**
+     * 通过查询条件查询商品信息
+     *
+     * @param request
+     * @return
+     */
+    /*public PageResult<Goods> search(SearchRequest request) {
         String key = request.getKey();
         // 判断是否有搜索条件，如果没有，直接返回null。不允许搜索全部商品
         //或者是返回固定的商品给他或者以固定的关键字进行查询 如key=手机
@@ -195,6 +213,129 @@ public class SearchService {
 
         // 封装结果并返回
         return new PageResult<>(pageInfo.getTotalElements(), pageInfo.getTotalPages(), pageInfo.getContent());
+    }*/
+    public SearchResult search(SearchRequest request) {
+
+        // 初始化自定义查询构建器
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+        //先获取过滤的字段，如品牌，分类
+
+        BoolQueryBuilder boolQueryBuilder = buildBooleanQueryBuilder(request);
+        queryBuilder.withQuery(boolQueryBuilder);
+
+        // 添加结果集过滤，只需要：id,subTitle, skus
+        queryBuilder.withSourceFilter(new FetchSourceFilter(new String[]{"id", "subTitle", "skus"}, null));
+
+        // 获取分页参数
+        Integer page = request.getPage();
+        Integer size = request.getSize();
+        // 添加分页
+        queryBuilder.withPageable(PageRequest.of(page - 1, size));
+
+        String categoryAggName = "categories";
+        String brandAggName = "brands";
+        //聚合，通过分类id和品牌id
+        queryBuilder.addAggregation(AggregationBuilders.terms(categoryAggName).field("cid3"));
+        queryBuilder.addAggregation(AggregationBuilders.terms(brandAggName).field("brandId"));
+
+        // 执行搜索，获取搜索的结果集
+        AggregatedPage<Goods> goodsPage = (AggregatedPage<Goods>) this.goodsRepository.search(queryBuilder.build());
+
+        // 解析聚合结果集
+        List<Map<String, Object>> categories = getCategoryAggResult(goodsPage.getAggregation(categoryAggName));
+        List<Brand> brands = getBrandAggResult(goodsPage.getAggregation(brandAggName));
+
+        // 封装成需要的返回结果集
+        return new SearchResult(goodsPage.getContent(), goodsPage.getTotalElements(), goodsPage.getTotalPages(), categories, brands);
     }
 
+    /**
+     * 解析品牌聚合结果集
+     *
+     * @param aggregation
+     * @return
+     */
+    private List<Brand> getBrandAggResult(Aggregation aggregation) {
+        // 处理聚合结果集
+        LongTerms terms = (LongTerms) aggregation;
+        // 获取所有的品牌id桶
+        List<LongTerms.Bucket> buckets = terms.getBuckets();
+        // 定义一个品牌集合，搜集所有的品牌对象
+        List<Brand> brands = new ArrayList<>();
+        // 解析所有的id桶，查询品牌
+        buckets.forEach(bucket -> {
+            Brand brand = this.brandClient.queryBrandById(bucket.getKeyAsNumber().longValue());
+            brands.add(brand);
+        });
+        return brands;
+        // 解析聚合结果集中的桶，把桶的集合转化成id的集合
+        // List<Long> brandIds = terms.getBuckets().stream().map(bucket -> bucket.getKeyAsNumber().longValue()).collect(Collectors.toList());
+        // 根据ids查询品牌
+        //return brandIds.stream().map(id -> this.brandClient.queryBrandById(id)).collect(Collectors.toList());
+        // return terms.getBuckets().stream().map(bucket -> this.brandClient.queryBrandById(bucket.getKeyAsNumber().longValue())).collect(Collectors.toList());
+    }
+
+    /**
+     * 解析分类
+     *
+     * @param aggregation
+     * @return
+     */
+    private List<Map<String, Object>> getCategoryAggResult(Aggregation aggregation) {
+        // 处理聚合结果集
+        LongTerms terms = (LongTerms) aggregation;
+        // 获取所有的分类id桶
+        List<LongTerms.Bucket> buckets = terms.getBuckets();
+        // 定义一个品牌集合，搜集所有的品牌对象
+        List<Map<String, Object>> categories = new ArrayList<>();
+        List<Long> cids = new ArrayList<>();
+        // 解析所有的id桶，查询品牌
+        buckets.forEach(bucket -> {
+            cids.add(bucket.getKeyAsNumber().longValue());
+        });
+        List<String> names;
+        //如果cids有数据
+        if (cids.size() != 0) {
+            names = this.categoryClient.queryNameByIds(cids);
+            for (int i = 0; i < cids.size(); i++) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", cids.get(i));
+                map.put("name", names.get(i));
+                categories.add(map);
+            }
+        }
+        return categories;
+    }
+
+    /**
+     * 通过前端传入的搜索关键字和过滤条件构造QueryBuilder
+     *
+     * @param request
+     * @return
+     */
+    private BoolQueryBuilder buildBooleanQueryBuilder(SearchRequest request) {
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        // 添加基本查询条件
+        if (!StringUtils.isBlank(request.getKey())) {
+            boolQueryBuilder.must(QueryBuilders.matchQuery("all", request.getKey()).operator(Operator.OR));
+        }
+        //添加过滤条件
+        // 添加过滤条件
+        if (CollectionUtils.isEmpty(request.getFilter())) {
+            return boolQueryBuilder;
+        }
+        for (Map.Entry<String, String> entry : request.getFilter().entrySet()) {
+            String key = entry.getKey();
+            if (StringUtils.equals("品牌", key)) {
+                key = "brandId";
+            } else if (StringUtils.equals("分类", key)) {
+                // 如果是“分类”，过滤字段名：cid3
+                key = "cid3";
+            }
+            boolQueryBuilder.filter(QueryBuilders.termQuery(key, entry.getValue()));
+        }
+        return boolQueryBuilder;
+    }
 }
+
+

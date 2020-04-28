@@ -7,6 +7,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
  * 用于搜索微服务
+ *
  * @author pan
  * @create 2020-04-26-10:17
  */

@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 */
-/**
+/**用于修改图片url路径
  * @author pan
  * @create 2020-04-26-20:38
  *//*
