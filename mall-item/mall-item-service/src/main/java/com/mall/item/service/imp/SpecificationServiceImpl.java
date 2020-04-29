@@ -71,4 +71,15 @@ public class SpecificationServiceImpl implements SpecificationService {
     public void updateParam(SpecParam specParam) {
         paramMapper.updateByPrimaryKeySelective(specParam);
     }
+
+    @Override
+    public List<SpecGroup> querySpecsByCid(Long cid) {
+        // 查询规格组
+        List<SpecGroup> groups = this.queryGroupsByCid(cid);
+        groups.forEach(g -> {
+            // 查询组内参数
+            g.setParams(this.queryParamsByGid(g.getId()));
+        });
+        return groups;
+    }
 }

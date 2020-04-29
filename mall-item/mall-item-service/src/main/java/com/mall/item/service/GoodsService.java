@@ -62,4 +62,11 @@ public interface GoodsService {
      * @param spu
      */
     void changeSaleable(Spu spu);
+
+    /**
+     * 通过id查询spu相关信息
+     * @param id
+     * @return
+     */
+    Spu querySpuById(Long id);
 }

@@ -62,4 +62,10 @@ public interface SpecificationService {
     void updateParam(SpecParam specParam);
 
 
+    /**
+     * 通过分类id查询分类下的规格参数
+     * @param cid
+     * @return
+     */
+    List<SpecGroup> querySpecsByCid(Long cid);
 }

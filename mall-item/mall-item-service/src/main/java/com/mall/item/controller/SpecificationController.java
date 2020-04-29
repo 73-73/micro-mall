@@ -4,6 +4,7 @@ import com.mall.item.service.SpecificationService;
 import com.mall.pojo.SpecGroup;
 import com.mall.pojo.SpecParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -116,4 +117,15 @@ public class SpecificationController {
         specificationService.updateParam(specParam);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("{cid}")
+    public ResponseEntity<List<SpecGroup>> querySpecsByCid(@PathVariable("cid") Long cid){
+        List<SpecGroup> list = this.specificationService.querySpecsByCid(cid);
+        if(list == null || list.size() == 0){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(list);
+    }
+
+
 }
