@@ -110,7 +110,7 @@ public class SearchService {
                 try {
                     value = genericSpecMap.get(param.getId()).toString();
                 } catch (NullPointerException e) {
-                    System.out.println(e.getMessage());
+//                    System.out.println(e.getMessage());
                 }
 //                String value = genericSpecMap.get(param.getId()).toString();
                 // 判断是否是数值类型

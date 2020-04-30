@@ -58,6 +58,13 @@ public class SpecificationServiceImpl implements SpecificationService {
     }
 
     @Override
+    public List<SpecParam> queryParamsByCid(Long cid) {
+        SpecParam specParam = new SpecParam();
+        specParam.setCid(cid);
+        return paramMapper.select(specParam);
+    }
+
+    @Override
     public void insertSpecParam(SpecParam specParam) {
         paramMapper.insertSelective(specParam);
     }

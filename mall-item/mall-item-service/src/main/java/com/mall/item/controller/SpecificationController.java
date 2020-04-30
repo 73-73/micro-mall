@@ -53,10 +53,24 @@ public class SpecificationController {
     }
 
     /**
-     * 根据分类id查询规格参数组
+     * 通过规格组id查询该组下的规格参数，比如通过主体组id查询组下的参数信息，如品牌，型号，上市年份
      * @param cid
      * @return
      */
+    @GetMapping("params/{cid}")
+    public ResponseEntity<List<SpecParam>> queryParamsInfoByCid(@PathVariable("cid") Long cid){
+        List<SpecParam> specParams = specificationService.queryParamsByCid(cid);
+        if(!CollectionUtils.isEmpty(specParams)){
+            return ResponseEntity.ok(specParams);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+   /* *//**
+     * 根据分类id查询规格参数组
+     * @param cid
+     * @return
+     *//*
     @GetMapping("{cid}")
     public ResponseEntity<List<SpecGroup>> querySpecsByCid(@PathVariable("cid") Long cid){
         List<SpecGroup> list = this.specificationService.querySpecsByCid(cid);
@@ -64,7 +78,7 @@ public class SpecificationController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(list);
-    }
+    }*/
 
     /**
      * 新增规格组

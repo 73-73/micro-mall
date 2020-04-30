@@ -1,3 +1,12 @@
+##运行
+
+启动nginx  
+```nginx start```  
+启动阿里云的搜索引擎  
+启动rabbitmq  
+
+
+
 ### RabbitMq
 默认登陆账户密码  
 username：guest  

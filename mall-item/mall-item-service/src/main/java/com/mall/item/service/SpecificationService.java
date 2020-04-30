@@ -68,4 +68,6 @@ public interface SpecificationService {
      * @return
      */
     List<SpecGroup> querySpecsByCid(Long cid);
+
+    List<SpecParam> queryParamsByCid(Long cid);
 }
