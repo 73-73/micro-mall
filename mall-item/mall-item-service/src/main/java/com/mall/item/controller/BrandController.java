@@ -84,12 +84,12 @@ public class BrandController {
      * 通过id更新品牌
      *
      * @param brand 品牌实体
-     * @param cids  品牌所属的分类id
+     * @param categories  品牌所属的分类id
      * @return
      */
     @PutMapping()
-    public ResponseEntity<Void> updateBrand(Brand brand, @RequestParam("cids") List<Long> cids) {
-        brandService.updateBrand(brand, cids);
+    public ResponseEntity<Void> updateBrand(Brand brand, @RequestParam("categories") List<Long> categories) {
+        brandService.updateBrand(brand, categories);
         return ResponseEntity.ok().build();
     }
 

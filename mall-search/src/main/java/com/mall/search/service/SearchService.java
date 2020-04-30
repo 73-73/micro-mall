@@ -336,6 +336,29 @@ public class SearchService {
         }
         return boolQueryBuilder;
     }
+
+    /**
+     * 通过id创建索引，用来消费来自mq队列中的消息
+     * @param id
+     * @throws IOException
+     */
+    public void createIndex(Long id) throws IOException {
+
+        Spu spu = this.goodsClient.querySpuById(id);
+        // 构建商品
+        Goods goods = this.buildGoods(spu);
+
+        // 保存数据到索引库
+        this.goodsRepository.save(goods);
+    }
+
+    /**
+     * 通过id删除索引，用来消费来自mq队列中的消息
+     * @param id
+     */
+    public void deleteIndex(Long id) {
+        this.goodsRepository.deleteById(id);
+    }
 }
 
 

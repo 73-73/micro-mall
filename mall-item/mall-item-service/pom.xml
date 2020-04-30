@@ -18,6 +18,8 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+
         <!-- eureka客户端 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -67,6 +69,12 @@
             <artifactId>mall-common</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
+        </dependency>
+
+        <!--加入mq进行组件间的消息通信-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
 
 <!--        <dependency>-->

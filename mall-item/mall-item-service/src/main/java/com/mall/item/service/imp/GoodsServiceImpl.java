@@ -12,6 +12,7 @@ import com.mall.pojo.SpuDetail;
 import com.mall.pojo.Stock;
 import com.mall.vo.SpuVo;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,9 @@ public class GoodsServiceImpl implements GoodsService {
     @Autowired
     StockMapper stockMapper;
 
+    @Autowired
+    AmqpTemplate amqpTemplate;
+
     @Override
     public PageResult<SpuVo> querySpuVoByPage(String key, Boolean saleable, Integer page, Integer rows) {
         //构建查询所需的example
@@ -60,7 +64,7 @@ public class GoodsServiceImpl implements GoodsService {
             criteria.andEqualTo("saleable", saleable);
         }
         //因为存在逻辑删除，所以只要搜出valid字段为true的数据即可
-        criteria.andEqualTo("valid",true);
+        criteria.andEqualTo("valid", true);
         //执行分页
         PageHelper.startPage(page, rows);
         List<Spu> spus = spuMapper.selectByExample(example);
@@ -100,6 +104,8 @@ public class GoodsServiceImpl implements GoodsService {
         this.spuDetailMapper.insertSelective(spuDetail);
 
         saveSkuAndStock(spuVo);
+        //像消息队列发送消息，让其他模块同步
+        sendMessage(spuVo.getId(),"insert");
     }
 
     private void saveSkuAndStock(SpuVo spuVo) {
@@ -142,7 +148,7 @@ public class GoodsServiceImpl implements GoodsService {
         // 查询以前sku
         List<Sku> skus = this.querySkusBySpuId(spuvo.getId());
         // 如果以前存在，则删除
-        if(!CollectionUtils.isEmpty(skus)) {
+        if (!CollectionUtils.isEmpty(skus)) {
             List<Long> ids = skus.stream().map(s -> s.getId()).collect(Collectors.toList());
             // 删除以前库存
             Example example = new Example(Stock.class);
@@ -165,6 +171,7 @@ public class GoodsServiceImpl implements GoodsService {
         this.spuMapper.updateByPrimaryKeySelective(spuvo);
         // 更新spu详情
         this.spuDetailMapper.updateByPrimaryKeySelective(spuvo.getSpuDetail());
+        sendMessage(spuvo.getId(),"update");
     }
 
     @Override
@@ -176,12 +183,14 @@ public class GoodsServiceImpl implements GoodsService {
         //更新修改时间
         spu.setLastUpdateTime(new Date());
         this.spuMapper.updateByPrimaryKeySelective(spu);
+        sendMessage(spuId,"delete");
     }
 
     @Override
     public void changeSaleable(Spu spu) {
         spu.setLastUpdateTime(new Date());
         this.spuMapper.updateByPrimaryKeySelective(spu);
+        sendMessage(spu.getId(),"update");
     }
 
     @Override
@@ -189,4 +198,18 @@ public class GoodsServiceImpl implements GoodsService {
         return this.spuMapper.selectByPrimaryKey(id);
     }
 
+    /**
+     * 通过mq发送消息，让其他模块响应这个变更，更新其数据库
+     *
+     * @param id
+     * @param type
+     */
+    private void sendMessage(Long id, String type) {
+        // 发送消息
+        try {
+            this.amqpTemplate.convertAndSend("item." + type, id);
+        } catch (Exception e) {
+            System.err.println(type + "商品消息发送异常，商品id：" + id + "   异常信息：" + e.getMessage());
+        }
+    }
 }

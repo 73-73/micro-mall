@@ -5,6 +5,12 @@ spring:
     name: goods-web
   thymeleaf:
     cache: false
+
+  rabbitmq:
+    host: localhost
+    username: mall
+    password: mall
+    virtual-host: /mall
 eureka:
   client:
     service-url:

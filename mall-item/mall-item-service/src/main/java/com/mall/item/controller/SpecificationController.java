@@ -39,6 +39,34 @@ public class SpecificationController {
     }
 
     /**
+     * 通过规格组id查询该组下的规格参数，比如通过主体组id查询组下的参数信息，如品牌，型号，上市年份
+     * @param gid
+     * @return
+     */
+    @GetMapping("params")
+    public ResponseEntity<List<SpecParam>> queryParamsInfo(@PathParam("gid") Long gid){
+        List<SpecParam> specParams = specificationService.queryParamsByGid(gid);
+        if(!CollectionUtils.isEmpty(specParams)){
+            return ResponseEntity.ok(specParams);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    /**
+     * 根据分类id查询规格参数组
+     * @param cid
+     * @return
+     */
+    @GetMapping("{cid}")
+    public ResponseEntity<List<SpecGroup>> querySpecsByCid(@PathVariable("cid") Long cid){
+        List<SpecGroup> list = this.specificationService.querySpecsByCid(cid);
+        if(list == null || list.size() == 0){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(list);
+    }
+
+    /**
      * 新增规格组
      * @param specGroup
      * @return
@@ -71,19 +99,7 @@ public class SpecificationController {
         return ResponseEntity.ok().build();
     }
 
-    /**
-     * 通过规格组id查询该组下的规格参数，比如通过主体组id查询组下的参数信息，如品牌，型号，上市年份
-     * @param gid
-     * @return
-     */
-    @GetMapping("params")
-    public ResponseEntity<List<SpecParam>> queryParamsInfo(@PathParam("gid") Long gid){
-        List<SpecParam> specParams = specificationService.queryParamsByGid(gid);
-        if(!CollectionUtils.isEmpty(specParams)){
-            return ResponseEntity.ok(specParams);
-        }
-        return ResponseEntity.notFound().build();
-    }
+
 
     /**
      * 添加规格参数记录
@@ -118,14 +134,7 @@ public class SpecificationController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("{cid}")
-    public ResponseEntity<List<SpecGroup>> querySpecsByCid(@PathVariable("cid") Long cid){
-        List<SpecGroup> list = this.specificationService.querySpecsByCid(cid);
-        if(list == null || list.size() == 0){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return ResponseEntity.ok(list);
-    }
+
 
 
 }

@@ -69,4 +69,13 @@ public class HtmlService {
     public void asyncExecute(Long spuId) {
         ThreadUtils.execute(() -> createHtml(spuId));
     }
+
+    /**
+     * 通过id删除指定路径的html静态资源
+     * @param id
+     */
+    public void deleteHtml(Long id) {
+        File file = new File("F:\\graduation-project\\html\\", id + ".html");
+        file.deleteOnExit();
+    }
 }
