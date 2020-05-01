@@ -1,6 +1,5 @@
 package com.mall.search.controller;
 
-import com.mall.common.PageResult;
 import com.mall.search.pojo.Goods;
 import com.mall.search.pojo.SearchRequest;
 import com.mall.search.pojo.SearchResult;

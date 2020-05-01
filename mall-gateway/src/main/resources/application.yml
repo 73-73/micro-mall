@@ -13,5 +13,22 @@ zuul:
   routes:
     item-service: /item/** # 商品微服务的映射路径
     search-service: /search/** #商品搜素微服务
+    user-service: /user/** #用户相关微服务
+    auth-service: /auth/** # 授权中心微服务
   ignored-services: upload-service #忽略该微服务，使其绕过zuul网关
+  add-host-header: true
+  sensitive-headers:   #配置的是禁止使用的头信息，这里设置为null
 #    upload-service: /upload/** #文件上传的路径
+
+mall:
+  jwt:
+    pubKeyPath:  F:\\graduation-project\\rsa\\rsa.pub # 公钥地址
+    cookieName: TOKEN # cookie的名称
+  filter:
+    allowPaths:
+      - /api/auth
+      - /api/search
+      - /api/user/register
+      - /api/user/check
+      - /api/user/code
+      - /api/item
