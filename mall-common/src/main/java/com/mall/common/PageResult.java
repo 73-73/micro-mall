@@ -29,12 +29,6 @@ public class PageResult<T> {
     public PageResult() {
     }
 
-    public <Goods> PageResult(Long total, List<Goods> item) {
-    }
-
-    public <Goods> PageResult(Long total, Long totalPage, List<Goods> item) {
-    }
-
     public Long getTotal() {
         return total;
     }
