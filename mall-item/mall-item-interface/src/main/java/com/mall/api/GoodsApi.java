@@ -5,6 +5,7 @@ import com.mall.pojo.Sku;
 import com.mall.pojo.Spu;
 import com.mall.pojo.SpuDetail;
 import com.mall.vo.SpuVo;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,4 +57,7 @@ public interface GoodsApi {
      */
     @GetMapping("spu/{id}")
     Spu querySpuById(@PathVariable("id") Long id);
+
+    @GetMapping("sku/{id}")
+    Sku querySkuById(@PathVariable("id")Long id);
 }

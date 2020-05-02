@@ -217,18 +217,17 @@
                             <div class="fl title">
                                 <div class="control-group">
                                     <div class="controls">
-                                        <input autocomplete="off" type="text" disabled value="1" minnum="1"
+                                        <input autocomplete="off" type="text" v-model="number" disabled value="1" minnum="1"
                                                class="itxt"/>
-                                        <a href="javascript:void(0)" class="increment plus">+</a>
-                                        <a href="javascript:void(0)" class="increment mins">-</a>
+                                        <a href="javascript:void(0)" class="increment plus" @click="increment">+</a>
+                                        <a href="javascript:void(0)" class="increment mins" @click="decrement">-</a>
                                     </div>
                                 </div>
                             </div>
                             <div class="fl">
                                 <ul class="btn-choose unstyled">
                                     <li>
-                                        <a href="success-cart.html" target="_blank"
-                                           class="sui-btn  btn-danger addshopcar">加入购物车</a>
+                                        <a href="#" class="sui-btn  btn-danger addshopcar" @click="addCart">加入购物车</a>
                                     </li>
                                 </ul>
                             </div>
@@ -277,9 +276,6 @@
                                                 <em>¥</em>
                                                 <i>6088.00</i>
                                             </strong>
-                                        </div>
-                                        <div class="operate">
-                                            <a href="javascript:void(0);" class="sui-btn btn-bordered">加入购物车</a>
                                         </div>
                                     </div>
                                 </li>
@@ -368,7 +364,8 @@
             paramMap,
             specialSpec,
             genericSpec,
-            indexes
+            indexes,
+            number:1
         },
         computed: {
             sku() {
@@ -381,6 +378,32 @@
         },
         components: {
             lyTop: () => import('/js/pages/top.js')
+        },
+        methods: {
+            increment(){
+                this.number++;
+            },
+            decrement(){
+                if(this.number>1){
+                    this.number--;
+                }
+            },
+            addCart(){
+                ly.http.get("/auth/verify").then(res=>{
+                    // 已登录发送信息到后台，保存到redis中
+                    console.log("跳转到购物车界面");
+                    ly.http.post("/cart",{skuId:this.sku.id,num:this.number}).then(res =>{
+                        window.location = "http://www.mall.com/cart.html";
+                    })
+                }).catch(()=>{
+                    // 未登录跳转到登录页
+                    console.log("未登陆");
+                    //window.alter("请先登录后再加入购物车");
+                    var curUrl = window.location.href;
+                    //跳转到登录界面，登陆成功后再跳转回来
+                    window.location.href = "http://www.mall.com/login.html?returnUrl=" + curUrl;
+                })
+            }
         }
     });
 </script>

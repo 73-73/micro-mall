@@ -212,4 +212,9 @@ public class GoodsServiceImpl implements GoodsService {
             System.err.println(type + "商品消息发送异常，商品id：" + id + "   异常信息：" + e.getMessage());
         }
     }
+
+    @Override
+    public Sku querySkuById(Long id) {
+        return this.skuMapper.selectByPrimaryKey(id);
+    }
 }

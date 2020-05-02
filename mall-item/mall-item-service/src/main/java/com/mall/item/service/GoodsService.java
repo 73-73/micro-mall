@@ -69,4 +69,13 @@ public interface GoodsService {
      * @return
      */
     Spu querySpuById(Long id);
+
+
+    /**
+     * 通过sku的id查询sku的相关属性并返回
+     * @param id
+     * @return
+     */
+    Sku querySkuById(Long id);
+
 }
