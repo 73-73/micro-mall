@@ -9,7 +9,6 @@ import com.mall.item.service.GoodsService;
 import com.mall.pojo.Sku;
 import com.mall.pojo.Spu;
 import com.mall.pojo.SpuDetail;
-import com.mall.pojo.Stock;
 import com.mall.vo.SpuVo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.amqp.core.AmqpTemplate;
@@ -42,9 +41,6 @@ public class GoodsServiceImpl implements GoodsService {
     SpuDetailMapper spuDetailMapper;
     @Autowired
     SkuMapper skuMapper;
-    @Autowired
-    StockMapper stockMapper;
-
     @Autowired
     AmqpTemplate amqpTemplate;
 
@@ -103,24 +99,18 @@ public class GoodsServiceImpl implements GoodsService {
         spuDetail.setSpuId(spuVo.getId());
         this.spuDetailMapper.insertSelective(spuDetail);
 
-        saveSkuAndStock(spuVo);
+        saveSku(spuVo);
         //像消息队列发送消息，让其他模块同步
-        sendMessage(spuVo.getId(),"insert");
+        sendMessage(spuVo.getId(), "insert");
     }
 
-    private void saveSkuAndStock(SpuVo spuVo) {
+    private void saveSku(SpuVo spuVo) {
         spuVo.getSkus().forEach(sku -> {
             // 新增sku
             sku.setSpuId(spuVo.getId());
             sku.setCreateTime(new Date());
             sku.setLastUpdateTime(sku.getCreateTime());
             this.skuMapper.insertSelective(sku);
-
-            // 新增库存
-            Stock stock = new Stock();
-            stock.setSkuId(sku.getId());
-            stock.setStock(sku.getStock());
-            this.stockMapper.insertSelective(stock);
         });
     }
 
@@ -134,11 +124,6 @@ public class GoodsServiceImpl implements GoodsService {
         Sku sku = new Sku();
         sku.setSpuId(spuId);
         List<Sku> skus = this.skuMapper.select(sku);
-        //对这些sku添加库存属性
-        skus.forEach(s -> {
-            Stock stock = this.stockMapper.selectByPrimaryKey(s.getId());
-            s.setStock(stock.getStock());
-        });
         return skus;
     }
 
@@ -150,19 +135,13 @@ public class GoodsServiceImpl implements GoodsService {
         // 如果以前存在，则删除
         if (!CollectionUtils.isEmpty(skus)) {
             List<Long> ids = skus.stream().map(s -> s.getId()).collect(Collectors.toList());
-            // 删除以前库存
-            Example example = new Example(Stock.class);
-            example.createCriteria().andIn("skuId", ids);
-            this.stockMapper.deleteByExample(example);
-
             // 删除以前的sku
             Sku record = new Sku();
             record.setSpuId(spuvo.getId());
             this.skuMapper.delete(record);
         }
         // 新增sku和库存
-        saveSkuAndStock(spuvo);
-
+        saveSku(spuvo);
         // 更新spu
         spuvo.setLastUpdateTime(new Date());
         spuvo.setCreateTime(null);
@@ -171,8 +150,9 @@ public class GoodsServiceImpl implements GoodsService {
         this.spuMapper.updateByPrimaryKeySelective(spuvo);
         // 更新spu详情
         this.spuDetailMapper.updateByPrimaryKeySelective(spuvo.getSpuDetail());
-        sendMessage(spuvo.getId(),"update");
+        sendMessage(spuvo.getId(), "update");
     }
+
 
     @Override
     public void deleteGoodBySpuId(Long spuId) {
@@ -183,14 +163,14 @@ public class GoodsServiceImpl implements GoodsService {
         //更新修改时间
         spu.setLastUpdateTime(new Date());
         this.spuMapper.updateByPrimaryKeySelective(spu);
-        sendMessage(spuId,"delete");
+        sendMessage(spuId, "delete");
     }
 
     @Override
     public void changeSaleable(Spu spu) {
         spu.setLastUpdateTime(new Date());
         this.spuMapper.updateByPrimaryKeySelective(spu);
-        sendMessage(spu.getId(),"update");
+        sendMessage(spu.getId(), "update");
     }
 
     @Override
@@ -216,5 +196,16 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public Sku querySkuById(Long id) {
         return this.skuMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public void updateStock(Long skuId, Integer num) {
+        Sku sku = new Sku();
+        sku.setId(skuId);
+        Integer oldStock = skuMapper.selectByPrimaryKey(skuId).getStock();
+        if (oldStock - num > 0) {
+            sku.setStock(oldStock - num);
+        }
+        this.skuMapper.updateByPrimaryKeySelective(sku);
     }
 }

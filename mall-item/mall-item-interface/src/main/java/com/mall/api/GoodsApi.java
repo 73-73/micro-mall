@@ -7,6 +7,7 @@ import com.mall.pojo.SpuDetail;
 import com.mall.vo.SpuVo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -57,6 +58,20 @@ public interface GoodsApi {
     @GetMapping("spu/{id}")
     Spu querySpuById(@PathVariable("id") Long id);
 
+    /**
+     * 根据skuid查询sku具体信息
+     * @param id
+     * @return
+     */
     @GetMapping("sku/{id}")
     Sku querySkuById(@PathVariable("id")Long id);
+
+    /**
+     * 更新库存
+     * @param skuId
+     * @param num
+     * @return
+     */
+    @PutMapping("goods/stock")
+    void updateStock(@RequestParam("skuId") Long skuId,@RequestParam("num")  Integer num);
 }

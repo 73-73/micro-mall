@@ -120,6 +120,19 @@ public class GoodsController {
     }
 
     /**
+     * 更新库存相关状态
+     * @param skuId
+     * @param num
+     * @return
+     */
+    @PutMapping("goods/stock")
+    public ResponseEntity<Void> updateStock(Long skuId,Integer num){
+        Sku sku = this.goodsService.querySkuById(skuId);
+        this.goodsService.updateStock(skuId,num);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
      * 通过商品id删除掉这个商品（包括子类商品）
      * @param spuId
      * @return

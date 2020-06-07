@@ -185,35 +185,6 @@ public class SearchService {
      * @param request
      * @return
      */
-    /*public PageResult<Goods> search(SearchRequest request) {
-        String key = request.getKey();
-        // 判断是否有搜索条件，如果没有，直接返回null。不允许搜索全部商品
-        //或者是返回固定的商品给他或者以固定的关键字进行查询 如key=手机
-        if (StringUtils.isBlank(key)) {
-            return null;
-        }
-        // 构建查询条件
-        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
-
-        // 1、对key进行全文检索查询
-        queryBuilder.withQuery(QueryBuilders.matchQuery("all", key).operator(Operator.AND));
-
-        // 2、通过sourceFilter设置返回的结果字段,我们只需要id、skus、subTitle
-        queryBuilder.withSourceFilter(new FetchSourceFilter(
-                new String[]{"id", "skus", "subTitle"}, null));
-
-        // 3、分页
-        // 准备分页参数
-        int page = request.getPage();
-        int size = request.getSize();
-        queryBuilder.withPageable(PageRequest.of(page - 1, size));
-
-        // 4、查询，获取结果
-        Page<Goods> pageInfo = this.goodsRepository.search(queryBuilder.build());
-
-        // 封装结果并返回
-        return new PageResult<>(pageInfo.getTotalElements(), pageInfo.getTotalPages(), pageInfo.getContent());
-    }*/
     public SearchResult search(SearchRequest request) {
 
         // 初始化自定义查询构建器

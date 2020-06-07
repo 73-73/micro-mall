@@ -45,7 +45,7 @@ public class JwtTest {
     @Test
     public void testGenerateToken() throws Exception {
         // 生成token
-        String token = JwtUtils.generateToken(new UserInfo(20L, "jack"), privateKey, 5);
+        String token = JwtUtils.generateToken(new UserInfo(20L, "jack",1), privateKey, 5);
         System.out.println("token = " + token);
     }
 

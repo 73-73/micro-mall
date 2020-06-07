@@ -24,6 +24,7 @@ public class JwtUtils {
         return Jwts.builder()
                 .claim(JwtConstans.JWT_KEY_ID, userInfo.getId())
                 .claim(JwtConstans.JWT_KEY_USER_NAME, userInfo.getUsername())
+                .claim(JwtConstans.JWT_KEY_USER_PERMISSION, userInfo.getPermission())
                 .setExpiration(DateTime.now().plusMinutes(expireMinutes).toDate())
                 .signWith(SignatureAlgorithm.RS256, privateKey)
                 .compact();
@@ -85,7 +86,8 @@ public class JwtUtils {
         Claims body = claimsJws.getBody();
         return new UserInfo(
                 ObjectUtils.toLong(body.get(JwtConstans.JWT_KEY_ID)),
-                ObjectUtils.toString(body.get(JwtConstans.JWT_KEY_USER_NAME))
+                ObjectUtils.toString(body.get(JwtConstans.JWT_KEY_USER_NAME)),
+                ObjectUtils.toInt(body.get(JwtConstans.JWT_KEY_USER_PERMISSION))
         );
     }
 
@@ -102,7 +104,8 @@ public class JwtUtils {
         Claims body = claimsJws.getBody();
         return new UserInfo(
                 ObjectUtils.toLong(body.get(JwtConstans.JWT_KEY_ID)),
-                ObjectUtils.toString(body.get(JwtConstans.JWT_KEY_USER_NAME))
+                ObjectUtils.toString(body.get(JwtConstans.JWT_KEY_USER_NAME)),
+                ObjectUtils.toInt(body.get(JwtConstans.JWT_KEY_USER_PERMISSION))
         );
     }
 }

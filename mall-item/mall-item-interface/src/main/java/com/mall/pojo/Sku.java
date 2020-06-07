@@ -35,7 +35,6 @@ public class Sku {
     /**
      * 库存
      */
-    @Transient
     private Integer stock;
 
     public Long getId() {

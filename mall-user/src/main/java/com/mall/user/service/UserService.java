@@ -55,7 +55,7 @@ public class UserService {
         user.setSalt(salt);
         // 对密码加密
         user.setPassword(CodecUtils.md5Hex(user.getPassword(), salt));
-        // 强制设置不能指定的参数为null
+        // 强制设置id为null,防止恶意指定
         user.setId(null);
         user.setCreated(new Date());
         // 添加到数据库

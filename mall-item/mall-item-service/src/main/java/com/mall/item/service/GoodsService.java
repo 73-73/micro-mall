@@ -78,4 +78,10 @@ public interface GoodsService {
      */
     Sku querySkuById(Long id);
 
+    /**
+     * 通过skuId更新库存信息
+     * @param skuId
+     * @param num
+     */
+    void updateStock(Long skuId, Integer num);
 }

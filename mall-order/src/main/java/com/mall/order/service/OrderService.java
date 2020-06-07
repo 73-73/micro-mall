@@ -2,6 +2,7 @@ package com.mall.order.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.mall.client.GoodClient;
 import com.mall.common.IdWorker;
 import com.mall.common.PageResult;
 import com.mall.common.pojo.UserInfo;
@@ -36,6 +37,11 @@ public class OrderService {
     @Autowired
     private OrderStatusMapper statusMapper;
 
+    @Autowired
+    private GoodClient goodClient;
+
+
+
     private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
 
     @Transactional
@@ -50,7 +56,6 @@ public class OrderService {
         order.setCreateTime(new Date());
         order.setOrderId(orderId);
         order.setUserId(user.getId());
-        // 保存数据
         this.orderMapper.insertSelective(order);
 
         // 保存订单状态
@@ -67,6 +72,13 @@ public class OrderService {
         // 保存订单详情,使用批量插入功能
         this.detailMapper.insertList(order.getOrderDetails());
 
+        //更新库存
+        List<OrderDetail> orderDetails = order.getOrderDetails();
+        for(OrderDetail orderDetail:orderDetails){
+            Long skuId = orderDetail.getSkuId();
+            Integer num = orderDetail.getNum();
+            goodClient.updateStock(skuId,num);
+        }
         logger.debug("生成订单，订单编号：{}，用户id：{}", orderId, user.getId());
 
         return orderId;
@@ -124,10 +136,12 @@ public class OrderService {
                 record.setEndTime(new Date());
                 break;
             case 5:
-                record.setCloseTime(new Date());// 交易失败，订单关闭
+                // 交易失败，订单关闭
+                record.setCloseTime(new Date());
                 break;
             case 6:
-                record.setCommentTime(new Date());// 评价时间
+                // 评价时间
+                record.setCommentTime(new Date());
                 break;
             default:
                 return null;

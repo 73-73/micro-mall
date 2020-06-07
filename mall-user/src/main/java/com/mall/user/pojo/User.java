@@ -15,7 +15,7 @@ import java.util.Date;
  * @create 2020-05-01-9:23
  */
 @Table(name="tb_user")
-public class User {
+public class  User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,6 +34,8 @@ public class User {
 
     @JsonIgnore
     private String salt;
+
+    private Integer permission;
 
     public Long getId() {
         return id;
@@ -81,5 +83,13 @@ public class User {
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    public Integer getPermission() {
+        return permission;
+    }
+
+    public void setPermission(Integer permission) {
+        this.permission = permission;
     }
 }

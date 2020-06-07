@@ -1,7 +1,9 @@
 package com.mall.order.controller;
 
+import com.mall.client.GoodClient;
 import com.mall.common.PageResult;
 import com.mall.order.pojo.Order;
+import com.mall.order.pojo.OrderDetail;
 import com.mall.order.service.OrderService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private GoodClient goodClient;
+
     /**
      * 创建订单
      *
@@ -28,9 +33,17 @@ public class OrderController {
     @PostMapping
     @ApiOperation(value = "创建订单接口，返回订单编号", notes = "创建订单")
     @ApiImplicitParam(name = "order", required = true, value = "订单的json对象,包含订单条目和物流信息")
-    public ResponseEntity<Long> createOrder(@RequestBody @Valid Order order) {
+    public ResponseEntity<String> createOrder(@RequestBody @Valid Order order) {
+        // 获取这个订单里面的商品的库存
+        for(OrderDetail orderDetail : order.getOrderDetails()){
+            Long skuId = orderDetail.getSkuId();
+            if(goodClient.querySkuById(skuId).getStock()<orderDetail.getNum()){
+                //该sku库存不足
+                return new ResponseEntity<>(orderDetail.getTitle(), HttpStatus.BAD_REQUEST);
+            }
+        }
         Long id = this.orderService.createOrder(order);
-        return new ResponseEntity<>(id, HttpStatus.CREATED);
+        return new ResponseEntity<>(id.toString(), HttpStatus.CREATED);
     }
 
     /**

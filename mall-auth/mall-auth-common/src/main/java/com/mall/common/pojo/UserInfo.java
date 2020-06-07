@@ -9,12 +9,15 @@ public class UserInfo {
 
     private String username;
 
+    private Integer permission;
+
     public UserInfo() {
     }
 
-    public UserInfo(Long id, String username) {
+    public UserInfo(Long id, String username, Integer permission) {
         this.id = id;
         this.username = username;
+        this.permission = permission;
     }
 
     public Long getId() {
@@ -31,5 +34,13 @@ public class UserInfo {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Integer getPermission() {
+        return permission;
+    }
+
+    public void setPermission(Integer permission) {
+        this.permission = permission;
     }
 }

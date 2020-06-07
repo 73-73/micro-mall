@@ -54,7 +54,7 @@ public class CartService {
         } else {
             // 不存在，新增购物车数据
             cart.setUserId(user.getId());
-            // 因为前台为了节省带宽只传入sku的id，需要通过这 个id查询其它商品信息，组合后加入redis
+            // 因为前台为了节省带宽只传入sku的id，需要通过这个id查询其它商品信息，组合后加入redis
             Sku sku = this.goodsClient.querySkuById(skuId);
             cart.setImage(StringUtils.isBlank(sku.getImages()) ? "" : StringUtils.split(sku.getImages(), ",")[0]);
             cart.setPrice(sku.getPrice());
