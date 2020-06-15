@@ -15,9 +15,11 @@ import java.security.PublicKey;
 @ConfigurationProperties(prefix = "mall.jwt")
 public class JwtProperties {
 
-    private String pubKeyPath;// 公钥
+    // 公钥
+    private String pubKeyPath;
 
-    private PublicKey publicKey; // 公钥
+    // 公钥
+    private PublicKey publicKey;
 
     private String cookieName;
 

@@ -5,6 +5,9 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.UUID;
 
+/**
+ * 加密相关，生成盐值
+ */
 public class CodecUtils {
 
 

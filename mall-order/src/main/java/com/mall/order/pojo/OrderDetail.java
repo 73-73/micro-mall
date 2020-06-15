@@ -12,19 +12,19 @@ public class OrderDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long orderId;// 订单id
+    private Long orderId;
 
-    private Long skuId;// 商品id
+    private Long skuId;
+    // 商品购买数量
+    private Integer num;
+    // 商品标题
+    private String title;
 
-    private Integer num;// 商品购买数量
+    private Long price;
+    // 商品规格数据
+    private String ownSpec;
 
-    private String title;// 商品标题
-
-    private Long price;// 商品单价
-
-    private String ownSpec;// 商品规格数据
-
-    private String image;// 图片
+    private String image;
 
     public Long getId() {
         return id;

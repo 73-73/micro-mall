@@ -1,10 +1,10 @@
 ##运行
 
-启动nginx  
+启动nginx   
+nginx的配置见nginx.conf文件   
 ```nginx start```  
-启动阿里云的搜索引擎  
+启动阿里云的搜索引擎和redis  
 启动rabbitmq  
-
 
 
 ### RabbitMq

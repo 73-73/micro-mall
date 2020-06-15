@@ -44,7 +44,7 @@ public class OrderService {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
 
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public Long createOrder(Order order) {
         // 生成orderId
         long orderId = idWorker.nextId();
@@ -135,7 +135,7 @@ public class OrderService {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Boolean updateStatus(Long id, Integer status) {
         OrderStatus record = new OrderStatus();
         record.setOrderId(id);

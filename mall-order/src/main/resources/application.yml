@@ -15,19 +15,6 @@ spring:
       max-active: 20
       max-wait: 1000
       test-on-borrow: true
-#  rabbitmq:
-#    host: 192.168.56.101
-#    username: leyou
-#    password: leyou
-#    virtual-host: /leyou
-#    template:
-#      retry:
-#        enabled: true
-#        initial-interval: 10000ms
-#        max-interval: 300000ms
-#        multiplier: 2
-#      exchange: leyou.item.exchange
-#    publisher-confirms: true
   redis:
     host: 47.98.137.54
     password: pan.2016
@@ -42,7 +29,6 @@ eureka:
 
 mybatis:
   type-aliases-package: com.mall.item.pojo
-#  mapper-locations: mapper/OrderMapper.xml
   configuration:
     map-underscore-to-camel-case: true
 mapper:

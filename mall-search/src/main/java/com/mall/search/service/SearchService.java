@@ -112,7 +112,6 @@ public class SearchService {
                 } catch (NullPointerException e) {
 //                    System.out.println(e.getMessage());
                 }
-//                String value = genericSpecMap.get(param.getId()).toString();
                 // 判断是否是数值类型
                 if (param.getNumeric()) {
                     // 如果是数值的话，判断该数值落在那个区间
@@ -125,7 +124,7 @@ public class SearchService {
             }
         });
 
-        // 设置商品相关的参数
+        //设置商品相关的参数
         goods.setId(spu.getId());
         goods.setCid1(spu.getCid1());
         goods.setCid2(spu.getCid2());
@@ -230,11 +229,6 @@ public class SearchService {
             brands.add(brand);
         });
         return brands;
-        // 解析聚合结果集中的桶，把桶的集合转化成id的集合
-        // List<Long> brandIds = terms.getBuckets().stream().map(bucket -> bucket.getKeyAsNumber().longValue()).collect(Collectors.toList());
-        // 根据ids查询品牌
-        //return brandIds.stream().map(id -> this.brandClient.queryBrandById(id)).collect(Collectors.toList());
-        // return terms.getBuckets().stream().map(bucket -> this.brandClient.queryBrandById(bucket.getKeyAsNumber().longValue())).collect(Collectors.toList());
     }
 
     /**

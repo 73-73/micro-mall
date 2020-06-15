@@ -170,7 +170,6 @@ public class GoodsServiceImpl implements GoodsService {
     public void changeSaleable(Spu spu) {
         spu.setLastUpdateTime(new Date());
         this.spuMapper.updateByPrimaryKeySelective(spu);
-//        sendMessage(spu.getId(), "update");
         if(spu.getSaleable()){
             sendMessage(spu.getId(), "update");
         }else{
