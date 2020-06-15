@@ -13,6 +13,7 @@ import com.mall.order.mapper.OrderStatusMapper;
 import com.mall.order.pojo.Order;
 import com.mall.order.pojo.OrderDetail;
 import com.mall.order.pojo.OrderStatus;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,6 @@ public class OrderService {
 
     @Autowired
     private GoodClient goodClient;
-
 
 
     private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
@@ -74,10 +74,10 @@ public class OrderService {
 
         //更新库存
         List<OrderDetail> orderDetails = order.getOrderDetails();
-        for(OrderDetail orderDetail:orderDetails){
+        for (OrderDetail orderDetail : orderDetails) {
             Long skuId = orderDetail.getSkuId();
             Integer num = orderDetail.getNum();
-            goodClient.updateStock(skuId,num);
+            goodClient.updateStock(skuId, num);
         }
         logger.debug("生成订单，订单编号：{}，用户id：{}", orderId, user.getId());
 
@@ -109,7 +109,26 @@ public class OrderService {
             // 创建查询条件
             Page<Order> pageInfo = (Page<Order>) this.orderMapper.queryOrderList(user.getId(), status);
 
-            return new PageResult<>(pageInfo.getTotal(),pageInfo.getPages(), pageInfo);
+            return new PageResult<>(pageInfo.getTotal(), pageInfo.getPages(), pageInfo);
+        } catch (Exception e) {
+            logger.error("查询订单出错", e);
+            return null;
+        }
+    }
+
+    public PageResult<Order> queryUserOrderPage(Integer page, Integer rows, Integer status, String key) {
+        try {
+            if (StringUtils.isNotBlank(key)) {
+                key = "%" + key + "%";
+            } else {
+                key = null;
+            }
+            // 分页
+            PageHelper.startPage(page, rows);
+            // 创建查询条件
+            Page<Order> pageInfo = (Page<Order>) this.orderMapper.queryOrderPage(key, status);
+
+            return new PageResult<>(pageInfo.getTotal(), pageInfo.getPages(), pageInfo);
         } catch (Exception e) {
             logger.error("查询订单出错", e);
             return null;
@@ -124,24 +143,16 @@ public class OrderService {
         // 根据状态判断要修改的时间
         switch (status) {
             case 2:
-                // 付款
-                record.setPaymentTime(new Date());
-                break;
-            case 3:
                 // 发货
                 record.setConsignTime(new Date());
                 break;
-            case 4:
+            case 3:
                 // 确认收获，订单结束
                 record.setEndTime(new Date());
                 break;
-            case 5:
+            case 4:
                 // 交易失败，订单关闭
                 record.setCloseTime(new Date());
-                break;
-            case 6:
-                // 评价时间
-                record.setCommentTime(new Date());
                 break;
             default:
                 return null;

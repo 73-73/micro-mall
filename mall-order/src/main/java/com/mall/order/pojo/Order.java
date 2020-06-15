@@ -1,6 +1,10 @@
 package com.mall.order.pojo;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
@@ -9,32 +13,42 @@ import java.util.List;
 public class Order {
 
     @Id
-    private Long orderId;// id
+    //因为前端JS的Long类型精度只有16位，而后端java的精度有18位，所以会造成精度缺失，最后两位订单号为00，出现bug
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long orderId;
     @NotNull
-    private Long totalPay;// 总金额
+    private Long totalPay;
     @NotNull
-    private Long actualPay;// 实付金额
+    private Long actualPay;
     @NotNull
-    private Integer paymentType; // 支付类型，1、在线支付，2、货到付款
+    private Integer paymentType;
 
-    private String promotionIds; // 参与促销活动的id
-    private String postFee;// 邮费
-    private Date createTime;// 创建时间
-    private String shippingName;// 物流名称
-    private String shippingCode;// 物流单号
-    private Long userId;// 用户id
-    private String buyerMessage;// 买家留言
-    private String buyerNick;// 买家昵称
-    private Boolean buyerRate;// 买家是否已经评价
-    private String receiver; // 收货人全名
-    private String receiverMobile; // 移动电话
-    private String receiverState; // 省份
-    private String receiverCity; // 城市
-    private String receiverDistrict; // 区/县
-    private String receiverAddress; // 收货地址，如：xx路xx号
-    private String receiverZip; // 邮政编码,如：310001
-    private Integer invoiceType;// 发票类型，0无发票，1普通发票，2电子发票，3增值税发票
-    private Integer sourceType;// 订单来源 1:app端，2：pc端，3：M端，4：微信端，5：手机qq端
+    private String promotionIds;
+    private String postFee;
+    // 创建时间
+    private Date createTime;
+    // 物流名称
+    private String shippingName;
+    // 物流单号
+    private String shippingCode;
+    private Long userId;
+    private String buyerMessage;
+    private String buyerNick;
+    private Boolean buyerRate;
+    // 收货人全名
+    private String receiver;
+    private String receiverMobile;
+    private String receiverState;
+    private String receiverCity;
+    private String receiverDistrict;
+    private String receiverAddress;
+    // 邮政编码,如：310001
+    private String receiverZip;
+    private Integer invoiceType;
+    private Integer sourceType;
+    private String title;
+
+    private String image;
 
     @Transient
     private List<OrderDetail> orderDetails;
@@ -232,5 +246,21 @@ public class Order {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

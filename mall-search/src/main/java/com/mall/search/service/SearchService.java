@@ -134,15 +134,6 @@ public class SearchService {
         goods.setCreateTime(spu.getCreateTime());
         goods.setSubTitle(spu.getSubTitle());
         //这个all字段为需要被搜索的所有字段的组合：商品的标题，品牌名称，分类名称
-////        spu.getTitle();
-//        try {
-//            brand.getName();
-//        } catch (NullPointerException e) {
-//            System.out.println(brand == null);
-//            System.out.println(spu.getId());
-//            System.out.println(spu.getBrandId());
-//            throw e;
-//        }
         goods.setAll(spu.getTitle() + brand.getName() + StringUtils.join(names, " "));
         goods.setPrice(prices);
         //把这个list集合转化为json字符串进行存储

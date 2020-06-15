@@ -1,11 +1,13 @@
 package com.mall.user.controller;
 
+import com.mall.common.PageResult;
 import com.mall.user.pojo.User;
 import com.mall.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -68,6 +70,45 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.ok(user);
+    }
+
+    /**
+     * 通过参数获取用户数据信息
+     * @param key
+     * @param usable
+     * @param page
+     * @param rows
+     * @return
+     */
+    @GetMapping("page")
+    public ResponseEntity<PageResult<User>> userList(
+            @RequestParam(value = "key", required = false) String key,
+            @RequestParam(value = "usable", required = false) Boolean usable,
+            @RequestParam(value = "page", defaultValue = "1") Integer page,
+            @RequestParam(value = "rows", defaultValue = "5") Integer rows
+    ){
+        PageResult<User> pageResult = this.userService.queryUserByPage(key, usable, page, rows);
+        if (CollectionUtils.isEmpty(pageResult.getItems())) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(pageResult);
+    }
+
+
+    /**
+     * 改变用户状态
+     * @param id
+     * @param usable
+     * @return
+     */
+    @PutMapping("usable")
+    public ResponseEntity<Void> changeUsable(Long id,Boolean usable){
+        if(this.userService.changeUsable(id,usable)>0){
+            return ResponseEntity.ok().build();
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 }
 

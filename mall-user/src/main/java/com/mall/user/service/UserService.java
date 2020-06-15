@@ -1,10 +1,15 @@
 package com.mall.user.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.mall.common.PageResult;
 import com.mall.user.mapper.UserMapper;
 import com.mall.user.pojo.User;
 import com.mall.user.utils.CodecUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
 import java.util.List;
@@ -73,6 +78,8 @@ public class UserService {
         // 查询
         User record = new User();
         record.setUsername(username);
+        //查询未被冻结的用户
+        record.setUsable(true);
         User user = this.userMapper.selectOne(record);
         // 校验用户名
         if (user == null) {
@@ -84,5 +91,42 @@ public class UserService {
         }
         // 用户名密码都正确
         return user;
+    }
+
+    /**
+     * 通过搜索条件取得用户信息
+     * @param key
+     * @param usable
+     * @param page
+     * @param rows
+     * @return
+     */
+    public PageResult<User> queryUserByPage(String key, Boolean usable, Integer page, Integer rows) {
+        //构建查询所需的example
+        Example example = new Example(User.class);
+        Example.Criteria criteria = example.createCriteria();
+        //判断搜索条件是否为空，加上条件查询
+        if (StringUtils.isNotBlank(key)) {
+            criteria.andLike("username", "%" + key + "%");
+        }
+        //如果有选择上架下架作为搜索条件的话
+        if (usable != null) {
+            //设计的时候数据库是以1和0作为是否上架的区分，数据类型是int，但是接收参数是以Boolean来接收的，但是仿佛并不需要转化，mysql好像能识别
+            criteria.andEqualTo("usable", usable);
+        }
+        //因为存在逻辑删除，所以只要搜出valid字段为true的数据即可
+        //执行分页
+        PageHelper.startPage(page, rows);
+        List<User> users = userMapper.selectByExample(example);
+        //封装成结果集
+        PageInfo pageInfo = new PageInfo(users);
+        return new PageResult(pageInfo.getTotal(), pageInfo.getPages(), users);
+    }
+
+    public int changeUsable(Long userId, Boolean usable) {
+        User user = new User();
+        user.setId(userId);
+        user.setUsable(usable);
+        return userMapper.updateByPrimaryKeySelective(user);
     }
 }

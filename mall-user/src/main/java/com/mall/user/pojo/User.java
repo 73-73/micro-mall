@@ -37,6 +37,8 @@ public class  User {
 
     private Integer permission;
 
+    private Boolean usable;
+
     public Long getId() {
         return id;
     }
@@ -91,5 +93,13 @@ public class  User {
 
     public void setPermission(Integer permission) {
         this.permission = permission;
+    }
+
+    public Boolean getUsable() {
+        return usable;
+    }
+
+    public void setUsable(Boolean usable) {
+        this.usable = usable;
     }
 }
